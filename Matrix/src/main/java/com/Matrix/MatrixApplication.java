@@ -4,11 +4,11 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class ObjectApplication {
+public class MatrixApplication {
 
 	public static void main(String[] args) {
-//		SpringApplication.run(ObjectApplication.class, args);
-		System.out.println("SPRING BOOT FRAMEWORK");
+//		SpringApplication.run(MatrixApplication.class, args);
+		System.out.println("MATRIX WORLD");
 	}
 
 }
