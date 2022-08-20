@@ -1,6 +1,14 @@
 package com.Matrix.Controllers;
 
+import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
+
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.ServletException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class ObjectController extends HttpServlet {
 	private MatrixService matrixService = new MatrixService();
@@ -20,5 +28,6 @@ public class ObjectController extends HttpServlet {
 			response.setStatus(200);
 			
 			response.setContentType("application/json");
+//			passing information to backend
 	}
 }

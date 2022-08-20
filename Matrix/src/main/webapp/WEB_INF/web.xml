@@ -16,7 +16,7 @@
   </servlet>
   
   <servlet-mapping>
-  	<servlet-name>Matrix-ORM</servlet-name>
+  	<servlet-name>ObjectController</servlet-name>
   	<url-pattern>/matrix/*</url-pattern>
   </servlet-mapping>
 </web-app>
