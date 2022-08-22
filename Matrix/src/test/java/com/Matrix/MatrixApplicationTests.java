@@ -9,7 +9,7 @@ class MatrixApplicationTests {
 
 	@BeforeEach
 	void GetObjects() {
-		
+		System.out.println("All Objects Will Be Loaded Soon");
 	}
 	
 	@Test

@@ -14,7 +14,7 @@
   	<servlet-name>ObjectController</servlet-name>
   	<servlet-class>com.Matrix.Controllers.ObjectController</servlet-class>
   </servlet>
-  
+  <!-- for http mapping -->
   <servlet-mapping>
   	<servlet-name>ObjectController</servlet-name>
   	<url-pattern>/matrix/*</url-pattern>
