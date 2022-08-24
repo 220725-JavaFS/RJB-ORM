@@ -1,12 +1,18 @@
 package com.Matrix.ORM;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.Matrix.Matrix;
 
@@ -28,9 +34,10 @@ public class MatrixService {
 //		To Use As A Method For Objects
 		this.connection = connection;
 	}
-	
+//	LogBack functionality
+	static Logger Log = LoggerFactory.getLogger(Matrix.class);
 	public <T> List<T> RetrieveMatrix(Class<T> DaClass){
-		ArrayList<?> Matrices = new ArrayList<T>();
+		ArrayList<T> Matrices = new ArrayList<>();
 //		an array of strings grabbed from class objects
 		String[] MatrciesNames = DaClass.getName().split("/");
 //		All Accessible FIelds
@@ -58,46 +65,40 @@ public class MatrixService {
 //						Looking for the Approximate getter with the "fieldname"
 						String GetterName = "get"+fieldname.substring(0, 1).toUpperCase()+fieldname.substring(1);
 //															^^^ "0," is beginning of index & "1" is the endIndex (which is optional)
-						
+						String setterName = "set" + fieldname.substring(0, 1).toUpperCase() + fieldname.substring(1);
+						try {
 //						looking for the type of setter parameter, prioritizing for field type
 						Class<?> SetterType = DaClass.getDeclaredField(fieldname).getType();
+						
+						Method setter = DaClass.getMethod(setterName, SetterType);
+						
+//						Finding the appropriate Type
+						Object FieldValue = convertStringToFieldType(result.getString(fieldname), SetterType);
+						
+//						I use the invoke method to populate the field
+						setter.invoke(NewMatrix, FieldValue);
+						
+						} catch (NoSuchFieldException e) {
+							Log.error(e.getLocalizedMessage(), e);
+						} catch (NoSuchMethodException e) {
+							Log.error(e.getLocalizedMessage(), e);
+						} catch (IllegalAccessException e) {
+							Log.error(e.getLocalizedMessage(), e);
+						} catch (InvocationTargetException | InstantiationException e) {
+							Log.error(e.getLocalizedMessage(), e);
+						}
 					}
-					// obtain the getter method from the class we are mapping 
-					Method getterMethod = objectClass.getMethod(getterName);
-					
-					// invoke that method on the object that we are mapping
-					Object fieldValue = getterMethod.invoke(o);
-				
-//					System.out.println(fieldValue.getClass());
-									
-					// construct a key value pair for each field name and field value
-					String jsonKeyValuePair = " \""+fieldName +"\""+" : \""+ fieldValue + "\",";
-					
-					// combine all of the key value pairs into a result string
-					jsonBuilder.append(jsonKeyValuePair);
-				
-				
-				} catch (NoSuchMethodException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (SecurityException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IllegalAccessException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IllegalArgumentException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (InvocationTargetException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					Matrices.add(NewMatrix);
+				} catch (InstantiationException | IllegalAccessException | InvocationTargetException
+						| NoSuchMethodException e) {
+					Log.error(e.getLocalizedMessage(), e);
 				}
 			}
-			Matrices.add(NewMatrix);
+			return (List<T>) Matrices;
 		} catch(SQLException e) {
 //			return object
 			System.out.println(e);
+			Log.error(e.getLocalizedMessage());
 		}
 //		if nothing is reached
 		return null;
@@ -112,5 +113,31 @@ public class MatrixService {
 		}
 	}
 	
+	protected Object convertStringToFieldType(String input, Class<?> type)
+			throws IllegalAccessException, InstantiationException, IllegalArgumentException, InvocationTargetException,
+			NoSuchMethodException, SecurityException {
+		switch (type.getName()) {
+		case "byte":
+			return Byte.valueOf(input);
+		case "short":
+			return Short.valueOf(input);
+		case "int":
+			return Integer.valueOf(input);
+		case "long":
+			return Long.valueOf(input);
+		case "double":
+			return Double.valueOf(input);
+		case "float":
+			return Float.valueOf(input);
+		case "boolean":
+			return Boolean.valueOf(input);
+		case "java.lang.String":
+			return input;
+		case "java.time.LocalDate":
+			return LocalDate.parse(input);
+		default:
+			return type.getDeclaredConstructor().newInstance();
+		}
+	}
 	
 }
