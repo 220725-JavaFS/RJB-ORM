@@ -1,5 +1,5 @@
 package com.Matrix;
-
+// maybe extends Comparable to compare matrixes.
 public class Matrix {
 	protected int id;
 	protected String ObjectName;
@@ -78,4 +78,15 @@ public class Matrix {
 			return false;
 		return true;
 	}
+	
+//	public int compareTo(Matrix m) {
+//		int z = this.ObjectName.compareTo(m.ObjectName);
+//		if(z != 0)
+//			return z;
+//		z = this.ObjectType.compareTo(m.ObjectType);
+//		if(z != 0)
+//			return z;
+////		ID Will Be Unique
+//		return 0;
+//	}
 }
