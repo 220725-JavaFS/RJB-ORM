@@ -30,6 +30,10 @@ public class MatrixService {
 		this.connection = connection;
 	}
 	
+/*
+* READING 
+*/
+	
 	public void EnterTheMatrix(Connection connection) {
 //		To Use As A Method For Objects
 		this.connection = connection;
@@ -113,6 +117,14 @@ public class MatrixService {
 		}
 	}
 	
+	private static void AppendingFieldToBuilder(Object O, StringBuilder SB) {
+		if (O.getClass() == String.class) {
+			SB.append("'" + O + "',");
+		} else {
+			SB.append(O + ",");
+		}
+	}
+	
 	protected Object convertStringToFieldType(String input, Class<?> type)
 			throws IllegalAccessException, InstantiationException, IllegalArgumentException, InvocationTargetException,
 			NoSuchMethodException, SecurityException {
@@ -138,6 +150,142 @@ public class MatrixService {
 		default:
 			return type.getDeclaredConstructor().newInstance();
 		}
+	}
+/*
+ * CREATING 
+ */
+	public int StoreMatrix(Object o) {
+
+		StringBuilder MatrixStatementBuilder = new StringBuilder();
+
+//		Piecing out the SQL statement
+		MatrixStatementBuilder.append("INSERT INTO ");
+		// obtain the matrix names of the fields in the object
+		Class<?> MatrixClass = o.getClass();
+		String[] tokens = MatrixClass.getName().split("\\.");
+		String MatrixName = tokens[tokens.length - 1];
+//		the name from index of tokens
+		MatrixStatementBuilder.append(MatrixName + "(");
+
+		Field[] MatrixFields = MatrixClass.getFields();
+
+		StringBuilder MatrixValueBuilder = new StringBuilder();
+		StringBuilder MatrixFieldBuilder = new StringBuilder();
+		for (Field field : fields) {
+
+			String fieldName = field.getName();
+
+			if (fieldName == "id") {
+				continue;
+			}
+
+			MatrixFieldBuilder.append(fieldName + ",");
+
+			// obtain the appropriate getter (using the field name)
+			String MatrixGetterName = "get"+fieldName.substring(0,1).toUpperCase()+fieldName.substring(1);
+//			System.out.println(getterName);
+
+			try {
+				// obtain the getter method from the class we are mapping
+				Method MatrixGetterMethod = MatrixClass.getMethod(MatrixGetterName);
+
+				// invoke that method on the object that we are mapping
+				Object MatrixFieldValue = MatrixGetterMethod.invoke(o);
+				
+				AppendingFieldToBuilder(MatrixFieldValue, MatrixValueBuilder);
+
+			} catch (NoSuchMethodException e) {
+				Log.error(e.getLocalizedMessage(), e);
+			} catch (SecurityException e) {
+				Log.error(e.getLocalizedMessage(), e);
+			} catch (IllegalAccessException e) {
+				Log.error(e.getLocalizedMessage(), e);
+			} catch (IllegalArgumentException e) {
+				Log.error(e.getLocalizedMessage(), e);
+			} catch (InvocationTargetException e) {
+				Log.error(e.getLocalizedMessage(), e);
+			}
+
+		}
+
+		MatrixFieldBuilder.deleteCharAt(MatrixFieldBuilder.length() - 1);
+		MatrixValueBuilder.deleteCharAt(MatrixValueBuilder.length() - 1);
+
+		MatrixStatementBuilder.append(MatrixFieldBuilder + ") VALUES (" + MatrixValueBuilder + ") RETURNING id;");
+/*
+ * 		RETURNING - 
+ * The returning clause specifies the values return 
+ * from DELETE , EXECUTE IMMEDIATE , INSERT , and UPDATE 
+ * statements.
+ */
+
+		String SQL = MatrixStatementBuilder.toString();
+		Log.info(SQL);
+		try {
+			PreparedStatement statement = connection.prepareStatement(SQL);
+			ResultSet result = statement.executeQuery();
+			Log.info("Matrix Stored.");
+			if (result.next()) {
+				return result.getInt("id");
+			}
+
+		} catch (SQLException e) {
+			Log.error(e.getLocalizedMessage(), e);
+		}
+//		If nothing is witnessed
+		return -1;
+	}
+/*
+* DELETING 
+*/
+	
+	public boolean DeleteMatrix(Object o) {
+
+		StringBuilder MatrixStatementBuilder = new StringBuilder();
+		MatrixStatementBuilder.append("DELETE FROM ");
+
+		// obtain the names of the fields in the object
+		Class<?> MatrixClass = o.getClass();
+		String[] tokens = MatrixClass.getName().split("\\.");
+		String className = tokens[tokens.length - 1];
+
+		MatrixStatementBuilder.append(className + " WHERE  id  =");
+
+		String MatrixGetterName = "getId";
+
+		try {
+			// obtain the getter method from the class we are mapping
+			Method MatrixGetterMethod = MatrixClass.getMethod(MatrixGetterName);
+
+			// invoke that method on the object that we are mapping
+			Object MatrixfieldValue = MatrixGetterMethod.invoke(o);
+
+			MatrixStatementBuilder.append(MatrixfieldValue + ";");
+
+		} catch (NoSuchMethodException e) {
+			Log.error(e.getLocalizedMessage(), e);
+		} catch (SecurityException e) {
+			Log.error(e.getLocalizedMessage(), e);
+		} catch (IllegalAccessException e) {
+			Log.error(e.getLocalizedMessage(), e);
+		} catch (IllegalArgumentException e) {
+			Log.error(e.getLocalizedMessage(), e);
+		} catch (InvocationTargetException e) {
+			Log.error(e.getLocalizedMessage(), e);
+		}
+
+		String SQL = MatrixStatementBuilder.toString();
+		Log.info(SQL);
+		try {
+			PreparedStatement statement = connection.prepareStatement(SQL);
+			statement.executeQuery();
+			Log.info("Matrix Deleted.");
+			return true;
+		} catch (SQLException e) {
+			Log.error(e.getLocalizedMessage(), e);
+		}
+		return false;
+
 	}
 	
 }
