@@ -11,27 +11,31 @@ class MatrixJsonMappingTests {
 	
 	static Matrix matrix;
 	static MatrixMapper MM;
+	static String Test;
 	
 	@BeforeAll
 	static void EvolveMatrix() {
 		matrix = new Matrix(100, "Demi Matrix", "Galaxy");
-		MatrixMapper MM = new MatrixJsonMapper();
+		MM = new MatrixJsonMapper();
+		Test = "{ \"id\": \"100\", \"ObjectName\": \"Demi Matrix\", \"ObjectType\": \"Galaxy\" }";
 	}
 
 	@Test
 	void MatrixToString() {
 		String json = MM.serialize(matrix);
 		System.out.println(json);
-//		assertEquals(json, "");
-		assertEquals("", "");
+		System.out.println(Test);
+		assertEquals(json, Test);
+//		assertEquals("", "");
 	}
 	
-//	@Test
-//	void StringToMatrix() {
-//		Matrix NewMatrix = MM.deSerialize(
-//		"{ \"id\": \"1\", \"Name\": \"New Matrix\", \"Type\": \"Nebula\" }", 
-//		Matrix.class);
-//		assertEquals(NewMatrix, Matrix.class);
-//	}
+	@Test
+	void StringToMatrix() {
+		Matrix NewMatrix = MM.deSerialize(
+		"{ \"id\": \"1\", \"ObjectName\": \"New Matrix\", \"ObjectType\": \"Nebula\" }", 
+		Matrix.class);
+		Matrix MatrixTest = new Matrix(1, "New Matrix", "Nebula");
+		assertEquals(NewMatrix, MatrixTest);
+	}
 
 }

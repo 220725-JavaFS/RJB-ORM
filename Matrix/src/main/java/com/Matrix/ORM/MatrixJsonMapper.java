@@ -37,7 +37,7 @@ public class MatrixJsonMapper implements MatrixMapper {
 //				System.out.println(fieldValue.getClass());
 								
 				// construct a key value pair for each field name and field value
-				String jsonKeyValuePair = " \""+fieldName +"\""+" : \""+ fieldValue + "\",";
+				String jsonKeyValuePair = " \""+fieldName+"\""+": \""+ fieldValue+"\",";
 				
 				// combine all of the key value pairs into a result string
 				jsonBuilder.append(jsonKeyValuePair);
