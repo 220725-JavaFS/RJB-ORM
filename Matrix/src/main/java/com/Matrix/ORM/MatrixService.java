@@ -3,7 +3,7 @@ package com.Matrix.ORM;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.sql.Connection;
+import java.sql.Connection; 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -16,7 +16,13 @@ import org.slf4j.LoggerFactory;
 
 import com.Matrix.Matrix;
 
-public class MatrixService {
+/*		NOTES
+ * Based on any type of class that is used i 
+ * will append json (Object Strings) to be read as sql statements
+ * for any webapp.
+ */
+
+public class MatrixService implements MatrixServiceImplementation {
 	Matrix matrix = new Matrix(0, "Vortex", "Space");
 	private Connection connection;
 	Class<?> ClassOne = matrix.getClass();
@@ -30,27 +36,30 @@ public class MatrixService {
 		this.connection = connection;
 	}
 	
-/*
-* READING 
-*/
 	
 	public void EnterTheMatrix(Connection connection) {
 //		To Use As A Method For Objects
 		this.connection = connection;
 	}
+/*
+* READING 
+*/
 //	LogBack functionality
 	static Logger Log = LoggerFactory.getLogger(Matrix.class);
 	public <T> List<T> RetrieveMatrix(Class<T> DaClass){
-		ArrayList<T> Matrices = new ArrayList<>();
+		ArrayList<T> Matrices = new ArrayList<T>();
 //		an array of strings grabbed from class objects
-		String[] MatrciesNames = DaClass.getName().split("/");
+		String[] MatrciesNames = DaClass.getName().split("\\.");
+//		"/" was previously in my split method. Now I have "\\."
 //		All Accessible FIelds
 		Field[] fields = DaClass.getFields();
 //		getting class name from MatricesNames array
 		String ClassName = MatrciesNames[MatrciesNames.length - 1];
 //		Adding boilerplate code to select from class name
 //		where the class name could be anything
-		String sql = "SELECT * from " + ClassName + ";";
+		String sql = "SELECT * FROM " + ClassName + ";";
+		Log.info(sql);
+//		adding a logging method here
 		
 		try {
 //			Lets prepare the statement .. this is too create and send
@@ -64,23 +73,24 @@ public class MatrixService {
 					T NewMatrix = DaClass.getDeclaredConstructor().newInstance();
 					for(Field EachField : fields) {
 //						intializing a string field name
-						String fieldname = EachField.getName();
+						String MatrixFieldname = EachField.getName();
 						
-//						Looking for the Approximate getter with the "fieldname"
-						String GetterName = "get"+fieldname.substring(0, 1).toUpperCase()+fieldname.substring(1);
+//						Looking for the Approximate getter with the "MatrixFieldname"
+//						String GetterName = "get"+MatrixFieldname.substring(0, 1).toUpperCase()+MatrixFieldname.substring(1);
 //															^^^ "0," is beginning of index & "1" is the endIndex (which is optional)
-						String setterName = "set" + fieldname.substring(0, 1).toUpperCase() + fieldname.substring(1);
+//						^^^^^ USING THIS AS AN EXAMPLE
+						String SetterName = "set" + MatrixFieldname.substring(0, 1).toUpperCase() + MatrixFieldname.substring(1);
 						try {
 //						looking for the type of setter parameter, prioritizing for field type
-						Class<?> SetterType = DaClass.getDeclaredField(fieldname).getType();
+						Class<?> SetterType = DaClass.getDeclaredField(MatrixFieldname).getType();
 						
-						Method setter = DaClass.getMethod(setterName, SetterType);
+						Method MatrixSetter = DaClass.getMethod(SetterName, SetterType);
 						
 //						Finding the appropriate Type
-						Object FieldValue = convertStringToFieldType(result.getString(fieldname), SetterType);
+						Object MatrixFieldValue = convertStringToFieldType(result.getString(MatrixFieldname), SetterType);
 						
 //						I use the invoke method to populate the field
-						setter.invoke(NewMatrix, FieldValue);
+						MatrixSetter.invoke(NewMatrix, MatrixFieldValue);
 						
 						} catch (NoSuchFieldException e) {
 							Log.error(e.getLocalizedMessage(), e);
@@ -98,6 +108,7 @@ public class MatrixService {
 					Log.error(e.getLocalizedMessage(), e);
 				}
 			}
+			Log.info("Matrix Retrived");
 			return (List<T>) Matrices;
 		} catch(SQLException e) {
 //			return object
@@ -116,6 +127,7 @@ public class MatrixService {
 			System.out.println("This program doesn't support the omniverse");
 		}
 	}
+//	^^^^^ USING THIS AS AN EXAMPLE
 	
 	private static void AppendingFieldToBuilder(Object O, StringBuilder SB) {
 		if (O.getClass() == String.class) {
@@ -171,7 +183,7 @@ public class MatrixService {
 
 		StringBuilder MatrixValueBuilder = new StringBuilder();
 		StringBuilder MatrixFieldBuilder = new StringBuilder();
-		for (Field field : fields) {
+		for (Field field : MatrixFields) {
 
 			String fieldName = field.getName();
 
@@ -246,15 +258,15 @@ public class MatrixService {
 
 		// obtain the names of the fields in the object
 		Class<?> MatrixClass = o.getClass();
-		String[] tokens = MatrixClass.getName().split("\\.");
-		String className = tokens[tokens.length - 1];
+		String[] MatrixTokens = MatrixClass.getName().split("\\.");
+		String MatrixClassName = MatrixTokens[MatrixTokens.length - 1];
 
-		MatrixStatementBuilder.append(className + " WHERE  id  =");
+		MatrixStatementBuilder.append(MatrixClassName + " WHERE  id  =");
 
 		String MatrixGetterName = "getId";
 
 		try {
-			// obtain the getter method from the class we are mapping
+			// obtain the MatrixGetterMethod from the class we are mapping
 			Method MatrixGetterMethod = MatrixClass.getMethod(MatrixGetterName);
 
 			// invoke that method on the object that we are mapping
@@ -286,6 +298,83 @@ public class MatrixService {
 		}
 		return false;
 
+	}
+	
+/*
+* UPDATING 
+*/
+	
+	public boolean MatrixUpdate(Object o) {
+
+		StringBuilder MatrixBuilder = new StringBuilder();
+		MatrixBuilder.append("UPDATE ");
+
+		// ^^^ Updating Matrix builder is made here 
+		Class<?> MatrixClass = o.getClass();
+		String[] MatrixTokens = MatrixClass.getName().split("\\.");
+		String MatrixClassName = MatrixTokens[MatrixTokens.length - 1];
+
+		MatrixBuilder.append(MatrixClassName + " SET ");
+
+		Field[] MatrixFields = MatrixClass.getFields();
+
+		String id = "";
+		for (Field field : MatrixFields) {
+
+			String MatrixFieldName = field.getName();
+
+			// obtain the appropriate getter (using the MatrixFieldName)
+			String MatrixGetterName = "get" + MatrixFieldName.substring(0, 1).toUpperCase() + MatrixFieldName.substring(1);
+//			System.out.println(getterName);
+
+			try {
+				// obtain the MatrixGetterMethod from the class we are mapping
+				Method MatrixGetterMethod = MatrixClass.getMethod(MatrixGetterName);
+
+				// invoke that method on the object that we are mapping
+				Object MatrixFieldValue = MatrixGetterMethod.invoke(o);
+
+				if (MatrixFieldName == "id") {
+					id = MatrixFieldValue.toString();
+					continue;
+				}
+				if (MatrixFieldValue.getClass() == String.class) {
+					MatrixBuilder.append(MatrixFieldName + " = '" + MatrixFieldValue + "',");
+				} else {
+					MatrixBuilder.append(MatrixFieldName + " = " + MatrixFieldValue + ",");
+				}
+//				^^^^ same as "AppendingFieldToBuilder" method but a little different
+//				I've added  " = " & commas to append to the builder. to than over have my sql statement
+
+			} catch (NoSuchMethodException e) {
+				Log.error(e.getLocalizedMessage(), e);
+			} catch (SecurityException e) {
+				Log.error(e.getLocalizedMessage(), e);
+			} catch (IllegalAccessException e) {
+				Log.error(e.getLocalizedMessage(), e);
+			} catch (IllegalArgumentException e) {
+				Log.error(e.getLocalizedMessage(), e);
+			} catch (InvocationTargetException e) {
+				Log.error(e.getLocalizedMessage(), e);
+			}
+
+		}
+
+		MatrixBuilder.deleteCharAt(MatrixBuilder.length() - 1);
+		MatrixBuilder.append(" WHERE id = " + id + ";");
+//		Putting everything altogether
+
+		String sql = MatrixBuilder.toString();
+		Log.info(sql);
+		try {
+			PreparedStatement statement = connection.prepareStatement(sql);
+			statement.executeQuery();
+			Log.info("Object updated.");
+			return true;
+		} catch (SQLException e) {
+			Log.error(e.getLocalizedMessage(), e);
+		}
+		return false;
 	}
 	
 }
