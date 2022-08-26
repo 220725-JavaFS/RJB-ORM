@@ -51,8 +51,13 @@ public class MatrixService implements MatrixServiceImplementation {
 //		an array of strings grabbed from class objects
 		String[] MatrciesNames = DaClass.getName().split("\\.");
 //		"/" was previously in my split method. Now I have "\\."
-//		All Accessible FIelds
-		Field[] fields = DaClass.getFields();
+/*	getDeclaredFields() - All Accessible FIelds - This includes public, protected, 
+ * default (package) access, and private fields, but excludes 
+ * inherited fields.
+ * ^^^^^^^^^^^^
+ * Different from get getFields() which is just All Accessible FIelds (public only)
+ */
+		Field[] fields = DaClass.getDeclaredFields();
 //		getting class name from MatricesNames array
 		String ClassName = MatrciesNames[MatrciesNames.length - 1];
 //		Adding boilerplate code to select from class name
@@ -179,14 +184,26 @@ public class MatrixService implements MatrixServiceImplementation {
 //		the name from index of tokens
 		MatrixStatementBuilder.append(MatrixName + "(");
 
-		Field[] MatrixFields = MatrixClass.getFields();
+		Field[] MatrixFields = MatrixClass.getDeclaredFields();
+		/*		On the fields
+		 * For getFields(), Returns an array containing Field 
+		 * objects reflecting all the accessible public fields
+		 *  of the class or interface represented by this Class 
+		 *  object
+		 *  
+		 * For getDeclaredFields(), Returns an array of Field objects 
+		 * reflecting all the fields declared by the class or 
+		 * interface represented by this Class object. 
+		 * This includes public, protected, default (package) access, 
+		 * and private fields, but excludes inherited fields.
+		 */
 
 		StringBuilder MatrixValueBuilder = new StringBuilder();
 		StringBuilder MatrixFieldBuilder = new StringBuilder();
 		for (Field field : MatrixFields) {
 
 			String fieldName = field.getName();
-
+			
 			if (fieldName == "id") {
 				continue;
 			}

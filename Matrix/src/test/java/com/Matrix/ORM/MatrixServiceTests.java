@@ -16,7 +16,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 /*		NOTES
- * Using mockito and junit
+ * Using mockito and junit .. logback is in the Matrix Service class
  */
 
 public class MatrixServiceTests {
@@ -47,23 +47,36 @@ public class MatrixServiceTests {
 		}
 	}
 	
-//	@Test
-//	void TestRetrieveMatrix(){
-//		try {
-//			Mockito.when(MockResultSet.getString("id")).thenReturn("1");
-//			Mockito.when(MockResultSet.getString("ObjectName")).thenReturn("UnknownMatrix");
-//			Mockito.when(MockResultSet.getString("ObjectType")).thenReturn("UnStudied");
-////			^^^ testing against the TestMatrix with mockito
-//		} catch (SQLException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		List<Matrix> MatrixTestList = matrixORM.RetrieveMatrix(Matrix.class);
-//
-//		Matrix test = MatrixTestList.get(0);
-//
-//		assertEquals(TestMatrix, test);
-//	}
+	@Test
+	public void TestStoreMatrix() {
+
+		try {
+			Mockito.when(MockResultSet.getInt("id")).thenReturn(1);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		int id = matrixORM.StoreMatrix(TestMatrix);
+		assertEquals(TestMatrix.getId(), id);
+	}
+	
+	@Test
+	void TestRetrieveMatrix(){
+		try {
+			Mockito.when(MockResultSet.getString("id")).thenReturn("1");
+			Mockito.when(MockResultSet.getString("ObjectName")).thenReturn("UnknownMatrix");
+			Mockito.when(MockResultSet.getString("ObjectType")).thenReturn("UnStudied");
+//			^^^ testing against the TestMatrix with mockito
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		List<Matrix> MatrixTestList = matrixORM.RetrieveMatrix(Matrix.class);
+
+		Matrix test = MatrixTestList.get(0);
+
+		assertEquals(TestMatrix, test);
+	}
 	
 	@Test
 	public void testDeleteObject() {
@@ -76,5 +89,7 @@ public class MatrixServiceTests {
 		Boolean updated = matrixORM.MatrixUpdate(TestMatrix);
 		assertTrue(updated);
 	}
+	
+	
 
 }

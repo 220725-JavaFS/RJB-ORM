@@ -1,0 +1,8 @@
+16:59:37.521 [] [main] INFO  com.Matrix.Matrix - SELECT * FROM Matrix;
+16:59:37.526 [] [main] INFO  com.Matrix.Matrix - Matrix Retrived
+16:59:37.542 [] [main] INFO  com.Matrix.Matrix - UPDATE Matrix SET WHERE id = ;
+16:59:37.542 [] [main] INFO  com.Matrix.Matrix - Object updated.
+16:59:37.546 [] [main] INFO  com.Matrix.Matrix - DELETE FROM Matrix WHERE  id  =1;
+16:59:37.547 [] [main] INFO  com.Matrix.Matrix - Matrix Deleted.
+16:59:37.550 [] [main] INFO  com.Matrix.Matrix - INSERT INTO Matrix(ObjectName,ObjectType) VALUES ('UnknownMatrix','UnStudied') RETURNING id;
+16:59:37.551 [] [main] INFO  com.Matrix.Matrix - Matrix Stored.
