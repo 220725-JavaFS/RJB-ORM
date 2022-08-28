@@ -6,3 +6,35 @@
 16:59:37.547 [] [main] INFO  com.Matrix.Matrix - Matrix Deleted.
 16:59:37.550 [] [main] INFO  com.Matrix.Matrix - INSERT INTO Matrix(ObjectName,ObjectType) VALUES ('UnknownMatrix','UnStudied') RETURNING id;
 16:59:37.551 [] [main] INFO  com.Matrix.Matrix - Matrix Stored.
+13:16:22.714 [] [main] INFO  com.Matrix.Matrix - SELECT * FROM Matrix;
+13:16:22.721 [] [main] INFO  com.Matrix.Matrix - Matrix Retrived
+13:16:22.746 [] [main] INFO  com.Matrix.Matrix - UPDATE Matrix SET WHERE id = ;
+13:16:22.746 [] [main] INFO  com.Matrix.Matrix - Object updated.
+13:16:22.751 [] [main] INFO  com.Matrix.Matrix - DELETE FROM Matrix WHERE  id  =1;
+13:16:22.752 [] [main] INFO  com.Matrix.Matrix - Matrix Deleted.
+13:16:22.756 [] [main] INFO  com.Matrix.Matrix - INSERT INTO Matrix(ObjectName,ObjectType) VALUES ('UnknownMatrix','UnStudied') RETURNING id;
+13:16:22.757 [] [main] INFO  com.Matrix.Matrix - Matrix Stored.
+19:10:40.145 [] [main] INFO  com.Matrix.Matrix - SELECT * FROM Matrix;
+19:10:40.151 [] [main] INFO  com.Matrix.Matrix - Matrix Retrived
+19:10:40.169 [] [main] INFO  com.Matrix.Matrix - UPDATE Matrix SET WHERE id = ;
+19:10:40.170 [] [main] INFO  com.Matrix.Matrix - Object updated.
+19:10:40.175 [] [main] INFO  com.Matrix.Matrix - DELETE FROM Matrix WHERE  id  =1;
+19:10:40.175 [] [main] INFO  com.Matrix.Matrix - Matrix Deleted.
+19:10:40.179 [] [main] INFO  com.Matrix.Matrix - INSERT INTO Matrix(ObjectName,ObjectType) VALUES ('UnknownMatrix','UnStudied') RETURNING id;
+19:10:40.179 [] [main] INFO  com.Matrix.Matrix - Matrix Stored.
+19:14:13.784 [] [main] INFO  com.Matrix.Matrix - SELECT * FROM Matrix;
+19:14:13.789 [] [main] INFO  com.Matrix.Matrix - Matrix Retrived
+19:14:13.805 [] [main] INFO  com.Matrix.Matrix - UPDATE Matrix SET WHERE id = ;
+19:14:13.805 [] [main] INFO  com.Matrix.Matrix - Object updated.
+19:14:13.810 [] [main] INFO  com.Matrix.Matrix - DELETE FROM Matrix WHERE  id  =1;
+19:14:13.810 [] [main] INFO  com.Matrix.Matrix - Matrix Deleted.
+19:14:13.815 [] [main] INFO  com.Matrix.Matrix - INSERT INTO Matrix(ObjectName,ObjectType) VALUES ('UnknownMatrix','UnStudied') RETURNING id;
+19:14:13.816 [] [main] INFO  com.Matrix.Matrix - Matrix Stored.
+19:37:53.130 [] [main] INFO  com.Matrix.Matrix - SELECT * FROM Matrix;
+19:37:53.136 [] [main] INFO  com.Matrix.Matrix - Matrix Retrived
+19:37:53.138 [] [main] INFO  com.Matrix.Matrix - UPDATE Matrix SET WHERE id = ;
+19:37:53.139 [] [main] INFO  com.Matrix.Matrix - Object updated.
+19:37:53.142 [] [main] INFO  com.Matrix.Matrix - DELETE FROM Matrix WHERE  id  =1;
+19:37:53.142 [] [main] INFO  com.Matrix.Matrix - Matrix Deleted.
+19:37:53.145 [] [main] INFO  com.Matrix.Matrix - INSERT INTO Matrix(ObjectName,ObjectType) VALUES ('UnknownMatrix','UnStudied') RETURNING id;
+19:37:53.146 [] [main] INFO  com.Matrix.Matrix - Matrix Stored.
